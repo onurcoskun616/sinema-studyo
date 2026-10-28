@@ -1,0 +1,9 @@
+{
+  "name": "sinema-studyo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Konu yazılınca senaryo, karakter, sahne, görsel, video, müzik ve kurguyu sırayla yapan yapay zekâ sinematik video platformu",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=20" }
+}
