@@ -521,5 +521,15 @@ http.createServer(async (req, res) => {
   console.log('Sinema Stüdyosu çalışıyor:', publicBase());
   const miss = ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SV_SECRET', 'SV_PREFIX', 'ADMIN_PASSWORD'].filter(k => !process.env[k]);
   if (miss.length) console.error('Eksik ortam değişkenleri:', miss.join(', '));
-  else setTimeout(resume, 2000);
+  else setTimeout(async () => { await selfCheck(); resume(); }, 1500);
 });
+
+// Açılışta veritabanı ve depolama erişimini doğrula (Render günlüğüne yazar)
+async function selfCheck() {
+  try { await db.select('sv_settings', 'select=k&limit=1'); console.log('Kontrol: veritabanı erişimi tamam'); } catch (e) { console.error('Kontrol: veritabanı HATASI', e.message); }
+  try {
+    const f = await storage.upload(`_kontrol/${stamp()}.txt`, Buffer.from('ok'), 'text/plain');
+    const r = await fetch(f.url); console.log('Kontrol: depolama yükleme tamam, herkese açık okuma', r.status);
+    try { await storage.remove([f.path]); console.log('Kontrol: depolama silme tamam'); } catch (e) { console.log('Kontrol: depolama silme yok (', e.message.slice(0, 120), ')'); }
+  } catch (e) { console.error('Kontrol: depolama HATASI', e.message); }
+}
